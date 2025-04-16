@@ -12,11 +12,14 @@ func _unhandled_input(event: InputEvent) -> void:
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	elif event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		neck.rotate_y(-event.relative.x * sensitivity)
+		camera.rotate_x(-event.relative.y*sensitivity)
 		
+		'''
 		# cant rotate camera vertical forever
 		const angle_lock := PI/2.1
 		if not(camera.get_rotation().x >= angle_lock or camera.get_rotation().x <= -angle_lock):
 			camera.rotate_x(-event.relative.y*sensitivity)
+		'''
 		
 	elif event.is_action_pressed("ui_cancel"):
 		Input.set_mouse_mode(Input.MOUSE_MODE_CONFINED)
