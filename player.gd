@@ -2,8 +2,9 @@ extends CharacterBody3D
 
 @onready var neck: Node3D = $Neck
 @onready var camera: Camera3D = $Neck/Camera3D
+@onready var reach_ray: RayCast3D = $Neck/Camera3D/ReachRay
 
-@export var sensitivity := 0.01
+@export var sensitivity := 0.002
 @export var SPEED := 5.0
 @export var JUMP_VELOCITY := 2.5
 
@@ -13,8 +14,15 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		neck.rotate_y(-event.relative.x * sensitivity)
 		camera.rotate_x(-event.relative.y*sensitivity)
+		# clamp msaximum camera vertical rotation after mouse movement
 		camera.set_rotation(Vector3(clamp(camera.get_rotation().x, -PI/2.2, PI/2.2), 0, 0))
 		
+		# handle raycast from center of camera to manipulate distanced objects
+		if reach_ray.is_colliding():
+			# print("detected object")
+			pass
+			# highlight the object (apply a shader that gives a white outline
+			# reach_ray.get_collider()
 	elif event.is_action_pressed("ui_cancel"):
 		Input.set_mouse_mode(Input.MOUSE_MODE_CONFINED)
 
@@ -22,8 +30,7 @@ func _physics_process(delta: float) -> void:
 	# Add gravity
 	if not is_on_floor():
 		velocity += get_gravity() * delta
-	if velocity:
-		print(velocity)
+	
 	# Handle jump
 	if Input.is_action_just_pressed("jump") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
